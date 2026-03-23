@@ -1,6 +1,7 @@
 package com.parking.vehicle;
 
 import com.parking.auth.UserRepository;
+import com.parking.vehicle.VehicleRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -20,6 +22,7 @@ public class EntryExitController {
 
     private final EntryExitService entryExitService;
     private final UserRepository userRepository;
+    private final VehicleRepository vehicleRepository;
 
     @PostMapping("/vehicles/entry")
     public ResponseEntity<VehicleDTOs.VehicleLogResponse> logEntry(
@@ -68,4 +71,10 @@ public class EntryExitController {
         return ResponseEntity.ok(entryExitService.findVehiclesByUser(user.getId()).stream()
                 .map(VehicleDTOs.VehicleResponse::from).toList());
     }
+    @DeleteMapping("/vehicles/{id}")
+    public ResponseEntity<Void> removeVehicle(@PathVariable UUID id) {
+        vehicleRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
